@@ -40,7 +40,8 @@ export const TurismoContextProvider = ({ children }) => {
     const loginUser = async (credentials) => {
         try {
             const response = await loginUserRequest(credentials);
-            setUser(response.data.user); 
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            localStorage.setItem("proveedor", JSON.stringify(response.data.proveedor));
             localStorage.setItem("token", response.data.token); 
             return response.data.message;
         }  catch (error) {
@@ -59,12 +60,7 @@ export const TurismoContextProvider = ({ children }) => {
     };
 
     const checkEmailsUnique = async (email) => {
-        try {
-            const response = await checkEmailsUniqueRequest(email);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+        return await handleRequest(checkEmailsUniqueRequest, [email]);
     };
 
     const [proveedores, setProveedores] = useState([]);
@@ -75,30 +71,15 @@ export const TurismoContextProvider = ({ children }) => {
     }
 
     const createProveedor = async (proveedor) => {
-        try {
-            const response = await createProveedorRequest(proveedor);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+        return await handleRequest(createProveedorRequest, [proveedor]);
     };
 
     const updateProveedor = async (proveedor) => {
-        try {
-            const response = await updateProveedorRequest(proveedor);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+        return await handleRequest(updateProveedorRequest, [proveedor]);
     };
 
-    const deleteProveedor = async (id) => {
-        try {
-            const response = await deleteProveedorRequest(id);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+    const deleteProveedor = async (proveedor) => {
+        return await handleRequest(deleteProveedorRequest, [proveedor]);
     };
 
     const [servicios, setServicios] = useState([]);
@@ -109,30 +90,15 @@ export const TurismoContextProvider = ({ children }) => {
     }
 
     const createServicio = async (servicio) => {
-        try {
-            const response = await createServicioRequest(servicio);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+        return await handleRequest(createServicioRequest, [servicio]);
     };
 
     const updateServicio = async (servicio) => {
-        try {
-            const response = await updateServicioRequest(servicio);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+        return await handleRequest(updateServicioRequest, [servicio]);
     };
 
-    const deleteServicio = async (id) => {
-        try {
-            const response = await deleteServicioRequest(id);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+    const deleteServicio = async (servicio) => {
+        return await handleRequest(deleteServicioRequest, [servicio]);
     };
 
     const [destinos, setDestinos] = useState([]);
@@ -143,29 +109,33 @@ export const TurismoContextProvider = ({ children }) => {
     }
 
     const createDestino = async (destino) => {
-        try {
-            const response = await createDestinoRequest(destino);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+        return await handleRequest(createDestinoRequest, [destino]);
     };
 
     const updateDestino = async (destino) => {
-        try {
-            const response = await updateDestinoRequest(destino);
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
+        return await handleRequest(updateDestinoRequest, [destino]);
     };
 
-    const deleteDestino = async (id) => {
+    const deleteDestino = async (destino) => {
+        return await handleRequest(deleteDestinoRequest, [destino]);
+    };
+
+    const handleRequest = async (requestFunction, params) => {
         try {
-            const response = await deleteDestinoRequest(id);
+            const response = await requestFunction(...params);
             return response;
         } catch (error) {
-            console.error(error);
+            if (error.response) {
+                if (error.response.status === 404) {
+                    throw new Error(error.response.data.message || "Recurso no encontrado");
+                } else {
+                    throw new Error(error.response.data.message || "Hubo un error en la solicitud");
+                }
+            } else if (error.request) {
+                throw new Error("Hubo un problema con la solicitud.");
+            } else {
+                throw new Error("Error desconocido.");
+            }
         }
     };
 

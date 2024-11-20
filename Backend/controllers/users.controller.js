@@ -38,7 +38,8 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ message: "Todos los campos son obligatorios" });
         }
 
-        const [user] = await pool.query("SELECT * FROM usuarios WHERE email = ?", [email]);
+        const [user] = await pool.query("SELECT u.*, r.nombre AS rol_nombre FROM usuarios u JOIN roles r ON u.rol_id = r.id WHERE u.email = ?",[email]);
+
         if (user.length === 0) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
@@ -50,18 +51,29 @@ export const loginUser = async (req, res) => {
             return res.status(401).json({ message: "Credenciales incorrectas" });
         }
 
+        const [proveedor] = await pool.query("SELECT id, razon_social FROM proveedores WHERE usuario_id = ?",[userData.id]);
+
+        const proveedorData = proveedor.length === 0 ? { id: null, razon_social: null } : proveedor[0];
+
         const token = jwt.sign(
-            { id: userData.id, nombre: userData.nombre, email: userData.email },
+            { id: userData.id, nombre: userData.nombre, email: userData.email, rol: userData.rol_nombre },
             SECRET_KEY,
-            { expiresIn: "1h" } 
+            { expiresIn: "1h" }
         );
 
         return res.status(200).json({
             message: "Login exitoso",
             token,
+            user: {
+                nombre: userData.nombre,
+                email: userData.email,
+                rol_name: userData.rol_nombre,
+                rol: userData.rol_id,
+            },
+            proveedor: proveedorData,
         });
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+      return res.status(500).json({ status: 500, message: error.message });
     }
 };
 
@@ -81,6 +93,6 @@ export const checkEmails = async (req, res) => {
 
         return res.status(200).json({ message: "Email existe", validate: false });
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+      return res.status(500).json({ status: 500, message: error.message });
     }
 };

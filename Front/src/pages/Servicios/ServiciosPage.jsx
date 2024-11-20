@@ -11,6 +11,9 @@ const ServiciosPage = () => {
         loadServicios();
     }, []);
 
+    const proveedorObject = localStorage.getItem('proveedor');
+    const proveedor = proveedorObject ? JSON.parse(proveedorObject) : null;
+
     const [searchTerm, setSearchTerm] = useState('');
     
     const [showForm, setShowForm] = useState(false);
@@ -30,13 +33,18 @@ const ServiciosPage = () => {
             return;
         }
 
-        try {
+        try {            
+            const valuesSubmit = {
+                ...values,
+                id: editingItem? editingItem.id : null,
+                proveedor_id: proveedor ? proveedor.id : null, 
+            };
+
             let response;
             if(editingItem){
-                const updatedValues = { ...values, id: editingItem.id, };
-                response = await updateServicio(updatedValues);
+                response = await updateServicio(valuesSubmit);
             }else{
-                response = await createServicio(values);
+                response = await createServicio(valuesSubmit);
             }
 
             if (response) {
@@ -63,7 +71,7 @@ const ServiciosPage = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Hubo un error en el servidor. Inténtalo mas tarde.',
+                text: error ? error : 'Hubo un error en el servidor. Inténtalo mas tarde.',
             });
             return 0;
         }
@@ -93,14 +101,32 @@ const ServiciosPage = () => {
 
         
         if (result.isConfirmed) {
-            await deleteServicio({id:id});
+            try {       
+                let response;
+                response= await deleteServicio({id:id, proveedor_id: proveedor ? proveedor.id : null });
     
-            Swal.fire({
-                icon: 'success',
-                title: 'Operacion exitosa',
-                text: 'Se ha eliminado el servicio con exito.',
-            });
-            loadServicios();
+                if (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Operacion exitosa',
+                        text: 'Se ha eliminado el servicio con exito.',
+                    });
+                    loadServicios();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un problema al eliminar los datos. Inténtalo nuevamente.'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error ? error : 'Hubo un error en el servidor. Inténtalo mas tarde.',
+                });
+                return 0;
+            }
         }
     };
 

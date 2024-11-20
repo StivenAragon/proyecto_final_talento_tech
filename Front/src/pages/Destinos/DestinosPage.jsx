@@ -11,6 +11,9 @@ const DestinosPage = () => {
         loadDestinos();
     }, []);
 
+    const proveedorObject = localStorage.getItem('proveedor');
+    const proveedor = proveedorObject ? JSON.parse(proveedorObject) : null;
+
     const [searchTerm, setSearchTerm] = useState('');
     
     const [showForm, setShowForm] = useState(false);
@@ -31,12 +34,17 @@ const DestinosPage = () => {
         }
 
         try {
+            const valuesSubmit = {
+                ...values,
+                id: editingItem? editingItem.id : null,
+                proveedor_id: proveedor ? proveedor.id : null, 
+            };
+
             let response;
             if(editingItem){
-                const updatedValues = { ...values, id: editingItem.id, };
-                response = await updateDestino(updatedValues);
+                response = await updateDestino(valuesSubmit);
             }else{
-                response = await createDestino(values);
+                response = await createDestino(valuesSubmit);
             }
 
             if (response) {
@@ -63,7 +71,7 @@ const DestinosPage = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Hubo un error en el servidor. Inténtalo mas tarde.',
+                text: error ? error : 'Hubo un error en el servidor. Inténtalo mas tarde.',
             });
             return 0;
         }
@@ -93,14 +101,32 @@ const DestinosPage = () => {
 
         
         if (result.isConfirmed) {
-            await deleteDestino({id:id});
+            try {       
+                let response;
+                response = await deleteDestino({id:id, proveedor_id: proveedor ? proveedor.id : null });
     
-            Swal.fire({
-                icon: 'success',
-                title: 'Operacion exitosa',
-                text: 'Se ha eliminado el destino con exito.',
-            });
-            loadDestinos();
+                if (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Operacion exitosa',
+                        text: 'Se ha eliminado el destino con exito.',
+                    });
+                    loadDestinos();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un problema al eliminar los datos. Inténtalo nuevamente.'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error ? error : 'Hubo un error en el servidor. Inténtalo mas tarde.',
+                });
+                return 0;
+            }
         }
     };
 

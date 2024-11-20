@@ -1,7 +1,7 @@
 import  { Router }  from "express";
 import { loginUser, registerUser, checkEmails } from "../controllers/users.controller.js"
 import { getServicios, createServicio, updateServicio, deleteServicio } from "../controllers/servicios.controller.js"
-import { getDestinos, createDestino, updateDestino, deleteDestino } from "../controllers/destino.controller.js"
+import { getDestinos, createDestino, updateDestino, deleteDestino } from "../controllers/destinos.controller.js"
 import { getProveedores, createProveedor, updateProveedor, deleteProveedor } from "../controllers/proveedores.controller.js"
 
 const router = Router();
