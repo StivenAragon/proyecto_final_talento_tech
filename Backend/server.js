@@ -5,6 +5,9 @@ import { fileURLToPath } from "url";
 import queryWeb from "./routes/web.router.js";
 import dotenv from "dotenv";
 
+import { seedRoles } from "./seeders/rolesSeeder.js";
+import { seedUsuarios } from "./seeders/usuariosSeeder.js";
+
 // Cargar variables de entorno desde .env
 dotenv.config();
 
@@ -25,6 +28,18 @@ app.use(express.static(join(__dirname, '../Front/dist')));
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 
-app.listen(PORT, HOST, () => {
-    console.log(`Server is running at http://${HOST}:${PORT}`);
+// Función para ejecutar los seeders
+const seedDatabase = async () => {
+    try {
+        await seedRoles(); 
+        await seedUsuarios(); 
+    } catch (error) {
+        console.error("Error ejecutando seeders:", error);
+    }
+};
+
+seedDatabase().then(() => {
+    app.listen(PORT, HOST, () => {
+        console.log(`Server is running at http://${HOST}:${PORT}`);
+    });
 });
