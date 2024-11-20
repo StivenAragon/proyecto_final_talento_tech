@@ -22,11 +22,7 @@ export const registerUser = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await pool.query("INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)", [
-            nombre,
-            email,
-            hashedPassword,
-        ]);
+        await pool.query("INSERT INTO usuarios (nombre, email, password, rol_id) VALUES (?, ?, ?, ?)", [ nombre, email, hashedPassword, "4", ]);
 
         return res.status(201).json({ message: "Usuario registrado exitosamente" });
     } catch (error) {
@@ -64,6 +60,26 @@ export const loginUser = async (req, res) => {
             message: "Login exitoso",
             token,
         });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const checkEmails = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: "El email es obligatorio" });
+        }
+
+        const [rows] = await pool.query("SELECT * FROM usuarios WHERE email = ?", [email]);
+
+        if (rows.length === 0) {
+            return res.status(200).json({ message: "Email no existe", validate: true });
+        }
+
+        return res.status(200).json({ message: "Email existe", validate: false });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

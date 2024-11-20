@@ -6,6 +6,8 @@ import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import NotFoundPage from "../pages/NotFoundPage ";
 import ServiciosPage from "../pages/Servicios/ServiciosPage";
+import DestinosPage from "../pages/Destinos/DestinosPage";
+import ProveedoresPage from "../pages/Proveedores/ProveedoresPage";
 
 const routesConfig = [
     {
@@ -38,10 +40,26 @@ const routesConfig = [
         ),
     },
     {
+        path: 'proveedores',
+        element: (
+            <PrivateRoute>
+                <ProveedoresPage />
+            </PrivateRoute>
+        ),
+    },
+    {
         path: 'servicios',
         element: (
             <PrivateRoute>
                 <ServiciosPage />
+            </PrivateRoute>
+        ),
+    },
+    {
+        path: 'destinos',
+        element: (
+            <PrivateRoute>
+                <DestinosPage />
             </PrivateRoute>
         ),
     },

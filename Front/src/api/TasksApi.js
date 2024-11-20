@@ -11,6 +11,22 @@ export const loginUserRequest = async (credentials) =>
 
 //Rutas Privadas
 
+export const checkEmailsUniqueRequest = async(email) => 
+    await axios.post(`${API_URL}/ckeckEmailsUnique`, email);
+
+//Proveedores
+export const getProveedoresRequest = async() => 
+    await axios.get(`${API_URL}/proveedores`);
+
+export const createProveedorRequest = async(proveedor) => 
+    await axios.post(`${API_URL}/proveedores/create`, proveedor);
+
+export const updateProveedorRequest = async(proveedor) => 
+    await axios.post(`${API_URL}/proveedores/update`, proveedor);
+
+export const deleteProveedorRequest = async(proveedor) => 
+    await axios.post(`${API_URL}/proveedores/delete`, proveedor);
+
 //Servicios
 export const getServiciosRequest = async() => 
     await axios.get(`${API_URL}/servicios`);
@@ -23,3 +39,16 @@ export const updateServicioRequest = async(servicio) =>
 
 export const deleteServicioRequest = async(servicio) => 
     await axios.post(`${API_URL}/servicios/delete`, servicio);
+
+//Destinos
+export const getDestinosRequest = async() => 
+    await axios.get(`${API_URL}/destinos`);
+
+export const createDestinoRequest = async(destino) => 
+    await axios.post(`${API_URL}/destinos/create`, destino);
+
+export const updateDestinoRequest = async(destino) => 
+    await axios.post(`${API_URL}/destinos/update`, destino);
+
+export const deleteDestinoRequest = async(destino) => 
+    await axios.post(`${API_URL}/destinos/delete`, destino);

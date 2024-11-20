@@ -1,7 +1,9 @@
 import { useContext, useState } from "react";
 import { 
-    registerUserRequest, loginUserRequest,
+    registerUserRequest, loginUserRequest, checkEmailsUniqueRequest,
     getServiciosRequest, createServicioRequest, updateServicioRequest, deleteServicioRequest,
+    getDestinosRequest, createDestinoRequest, updateDestinoRequest, deleteDestinoRequest,
+    getProveedoresRequest, createProveedorRequest, updateProveedorRequest, deleteProveedorRequest, 
 } from "../api/TasksApi.js";
 import { TurismoContext } from "./TurismoContext.jsx";
 
@@ -56,6 +58,49 @@ export const TurismoContextProvider = ({ children }) => {
         }
     };
 
+    const checkEmailsUnique = async (email) => {
+        try {
+            const response = await checkEmailsUniqueRequest(email);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const [proveedores, setProveedores] = useState([]);
+
+    async function loadProveedores() {
+        const response = await getProveedoresRequest();
+        setProveedores(response.data);
+    }
+
+    const createProveedor = async (proveedor) => {
+        try {
+            const response = await createProveedorRequest(proveedor);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const updateProveedor = async (proveedor) => {
+        try {
+            const response = await updateProveedorRequest(proveedor);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const deleteProveedor = async (id) => {
+        try {
+            const response = await deleteProveedorRequest(id);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const [servicios, setServicios] = useState([]);
 
     async function loadServicios() {
@@ -65,12 +110,8 @@ export const TurismoContextProvider = ({ children }) => {
 
     const createServicio = async (servicio) => {
         try {
-            if (servicio.nombre !== "") {
-                const response = await createServicioRequest(servicio);
-                return response;
-            } else {
-                alert("Por favor completar campos");
-            }
+            const response = await createServicioRequest(servicio);
+            return response;
         } catch (error) {
             console.error(error);
         }
@@ -78,12 +119,8 @@ export const TurismoContextProvider = ({ children }) => {
 
     const updateServicio = async (servicio) => {
         try {
-            if (servicio.title !== "") {
-                const response = await updateServicioRequest(servicio);
-                return response;
-            } else {
-                alert("Por favor completar campos");
-            }
+            const response = await updateServicioRequest(servicio);
+            return response;
         } catch (error) {
             console.error(error);
         }
@@ -98,10 +135,46 @@ export const TurismoContextProvider = ({ children }) => {
         }
     };
 
+    const [destinos, setDestinos] = useState([]);
+
+    async function loadDestinos() {
+        const response = await getDestinosRequest();
+        setDestinos(response.data);
+    }
+
+    const createDestino = async (destino) => {
+        try {
+            const response = await createDestinoRequest(destino);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const updateDestino = async (destino) => {
+        try {
+            const response = await updateDestinoRequest(destino);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const deleteDestino = async (id) => {
+        try {
+            const response = await deleteDestinoRequest(id);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <TurismoContext.Provider value={{
-            user, registerUser, loginUser,
-            servicios, loadServicios, createServicio, updateServicio, deleteServicio
+            user, registerUser, loginUser, checkEmailsUnique,
+            proveedores, loadProveedores, createProveedor, updateProveedor, deleteProveedor,
+            servicios, loadServicios, createServicio, updateServicio, deleteServicio,
+            destinos, loadDestinos, createDestino, updateDestino, deleteDestino,
         }}>
             {children}
         </TurismoContext.Provider>

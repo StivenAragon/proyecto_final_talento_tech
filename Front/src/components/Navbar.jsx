@@ -7,8 +7,8 @@ export const Navbar = () => {
     const navigate = useNavigate();
 
     const token = localStorage.getItem('token');
-    const [isMenuOpen, setIsMenuOpen] = useState(false); // Controla el menú derecho
-    const [isLeftMenuOpen, setIsLeftMenuOpen] = useState(false); // Controla el menú izquierdo
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLeftMenuOpen, setIsLeftMenuOpen] = useState(false);
 
     const onLogout = () => {
         localStorage.removeItem('token');
@@ -23,6 +23,10 @@ export const Navbar = () => {
 
     const toggleLeftMenu = () => {
         setIsLeftMenuOpen(!isLeftMenuOpen);
+    };
+
+    const closeLeftMenu = () => {
+        setIsLeftMenuOpen(false);
     };
 
     return (
@@ -41,20 +45,30 @@ export const Navbar = () => {
                                 {isLeftMenuOpen && (
                                     <div className="absolute left-0 top-12 w-48 bg-gray-800 text-white p-4 rounded-md shadow-md">
                                         <Link
+                                            to="/proveedores"
+                                            className="block hover:bg-gray-700 px-3 py-2 rounded transition"
+                                            onClick={closeLeftMenu}
+                                        >
+                                            Proveedores
+                                        </Link>
+                                        <Link
                                             to="/servicios"
                                             className="block hover:bg-gray-700 px-3 py-2 rounded transition"
+                                            onClick={closeLeftMenu}
                                         >
                                             Servicios
                                         </Link>
                                         <Link
-                                            to="/analytics"
+                                            to="/destinos"
                                             className="block hover:bg-gray-700 px-3 py-2 rounded transition"
+                                            onClick={closeLeftMenu}
                                         >
                                             Destinos
                                         </Link>
                                         <Link
                                             to="/reports"
                                             className="block hover:bg-gray-700 px-3 py-2 rounded transition"
+                                            onClick={closeLeftMenu}
                                         >
                                             Campañas
                                         </Link>
