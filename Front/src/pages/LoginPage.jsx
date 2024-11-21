@@ -87,21 +87,19 @@ const LoginPage = () => {
                         </div>
                         <div className="mt-3 text-center relative">
                             <label className="block">Contraseña</label>
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                name="password"
-                                placeholder="Contraseña"
-                                onChange={handleChange}
-                                value={values.password}
-                                className={`px-2 py-1 rounded-sm w-full rounded-md ${errors.password && touched.password ? 'border-red-500' : ''}`}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-2 top-1/2 transform -translate-y-1/4 text-gray-500"
-                            >
-                                <i className={`fa ${showPassword ? 'fa-eye' : 'fa-eye-slash'} text-xl`}></i>
-                            </button>
+                            <div className="relative w-full">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    placeholder="Contraseña"
+                                    onChange={handleChange}
+                                    value={values.password}
+                                    className={`px-2 py-1 rounded-sm w-full rounded-md ${errors.password && touched.password ? 'border-red-500' : ''}`}
+                                />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"  >
+                                    <i className={`fa ${showPassword ? 'fa-eye' : 'fa-eye-slash'} text-xl`}></i>
+                                </button>
+                            </div>
                             {errors.password && touched.password && (
                                 <p className="text-red-500 text-sm">{errors.password}</p>
                             )}

@@ -33,9 +33,11 @@ export const Navbar = () => {
                     {token ? (
                         <>
                             <div className="relative">
-                                <button className="text-white" onClick={toggleLeftMenu} >
-                                    <i className="fa fa-bars text-2xl mr-4"></i>
-                                </button>
+                                {(user?.rol !== 4) && (
+                                    <button className="text-white" onClick={toggleLeftMenu} >
+                                        <i className="fa fa-bars text-2xl mr-4"></i>
+                                    </button>
+                                )}
                                 {isLeftMenuOpen && (
                                     <div className="absolute left-0 top-12 w-48 bg-gray-800 text-white p-4 rounded-md shadow-md">
                                         {(user?.rol === 1 || user?.rol === 2) && (
@@ -51,7 +53,7 @@ export const Navbar = () => {
                                                 <Link to="/destinos" className="block hover:bg-gray-700 px-3 py-2 rounded transition" onClick={closeMenu} >
                                                     Destinos
                                                 </Link>
-                                                <Link to="/reports" className="block hover:bg-gray-700 px-3 py-2 rounded transition" onClick={closeMenu} >
+                                                <Link to="/campanhas" className="block hover:bg-gray-700 px-3 py-2 rounded transition" onClick={closeMenu} >
                                                     Campañas
                                                 </Link>
                                             </>
@@ -68,9 +70,6 @@ export const Navbar = () => {
                         </>
                     ) : (
                         <h1 className="text-2xl font-bold">
-                            <Link to="/" className="hover:text-gray-300">
-                                <i className="fa fa-home"></i>
-                            </Link>
                         </h1>
                     )}
 
@@ -98,8 +97,11 @@ export const Navbar = () => {
 
                                 {isMenuOpen && (
                                     <div className="absolute right-0 top-12 w-48 bg-gray-800 text-white p-4 rounded-md shadow-md">
-                                        <Link to="/profile" className="block hover:bg-gray-700 px-3 py-2 rounded transition" >
+                                        <Link to="/perfil" className="block hover:bg-gray-700 px-3 py-2 rounded transition" onClick={closeMenu}>
                                             Perfil
+                                        </Link>
+                                        <Link to="/cambiar_contrasenha" className="block hover:bg-gray-700 px-3 py-2 rounded transition" onClick={closeMenu}>
+                                            Cambiar Contraseña
                                         </Link>
                                         <button onClick={onLogout} className="block w-full text-left hover:bg-red-500 px-3 py-2 rounded transition mt-2">
                                             Cerrar sesión

@@ -1,9 +1,10 @@
 import { useContext, useState } from "react";
 import { 
-    registerUserRequest, loginUserRequest, checkEmailsUniqueRequest,
-    getServiciosRequest, createServicioRequest, updateServicioRequest, deleteServicioRequest,
-    getDestinosRequest, createDestinoRequest, updateDestinoRequest, deleteDestinoRequest,
+    registerUserRequest, loginUserRequest, checkEmailsUniqueRequest, cambiarContrasenhaRequest,
     getProveedoresRequest, createProveedorRequest, updateProveedorRequest, deleteProveedorRequest, 
+    getServiciosRequest, createServicioRequest, updateServicioRequest, deleteServicioRequest, getServiciosProveedoresRequest,
+    getDestinosRequest, createDestinoRequest, updateDestinoRequest, deleteDestinoRequest, getDestinosProveedoresRequest,
+    getCampanhasRequest, createCampanhaRequest, updateCampanhaRequest, deleteCampanhaRequest, getCampanhasProveedorRequest, getCampanhasDestinosDesdeRequest, getCampanhasDestinosHastaRequest
 } from "../api/TasksApi.js";
 import { TurismoContext } from "./TurismoContext.jsx";
 
@@ -63,6 +64,10 @@ export const TurismoContextProvider = ({ children }) => {
         return await handleRequest(checkEmailsUniqueRequest, [email]);
     };
 
+    const cambiarContrasenha = async (contraseñas) => {
+        return await handleRequest(cambiarContrasenhaRequest, [contraseñas]);
+    };
+
     const [proveedores, setProveedores] = useState([]);
 
     async function loadProveedores() {
@@ -101,6 +106,10 @@ export const TurismoContextProvider = ({ children }) => {
         return await handleRequest(deleteServicioRequest, [servicio]);
     };
 
+    const getServiciosProveedores = async (servicio) => {
+        return await handleRequest(getServiciosProveedoresRequest, [servicio]);
+    };
+
     const [destinos, setDestinos] = useState([]);
 
     async function loadDestinos() {
@@ -118,6 +127,41 @@ export const TurismoContextProvider = ({ children }) => {
 
     const deleteDestino = async (destino) => {
         return await handleRequest(deleteDestinoRequest, [destino]);
+    };
+
+    const getDestinosProveedores = async (destino) => {
+        return await handleRequest(getDestinosProveedoresRequest, [destino]);
+    };
+
+    const [campanhas, setCampanhas] = useState([]);
+
+    async function loadCampanhas(params) {
+        const response = await getCampanhasRequest(params);
+        setCampanhas(response.data);
+    }
+
+    const createCampanha = async (campanha) => {
+        return await handleRequest(createCampanhaRequest, [campanha]);
+    };
+
+    const updateCampanha = async (campanha) => {
+        return await handleRequest(updateCampanhaRequest, [campanha]);
+    };
+
+    const deleteCampanha = async (campanha) => {
+        return await handleRequest(deleteCampanhaRequest, [campanha]);
+    };
+
+    const getCampanhasProveedor = async (campanha) => {
+        return await handleRequest(getCampanhasProveedorRequest, [campanha]);
+    };
+
+    const getCampanhasDestinosDesde = async (campanha) => {
+        return await handleRequest(getCampanhasDestinosDesdeRequest, [campanha]);
+    };
+
+    const getCampanhasDestinosHasta = async (campanha) => {
+        return await handleRequest(getCampanhasDestinosHastaRequest, [campanha]);
     };
 
     const handleRequest = async (requestFunction, params) => {
@@ -141,10 +185,11 @@ export const TurismoContextProvider = ({ children }) => {
 
     return (
         <TurismoContext.Provider value={{
-            user, registerUser, loginUser, checkEmailsUnique,
+            user, registerUser, loginUser, checkEmailsUnique, cambiarContrasenha,
             proveedores, loadProveedores, createProveedor, updateProveedor, deleteProveedor,
-            servicios, loadServicios, createServicio, updateServicio, deleteServicio,
-            destinos, loadDestinos, createDestino, updateDestino, deleteDestino,
+            servicios, loadServicios, createServicio, updateServicio, deleteServicio, getServiciosProveedores,
+            destinos, loadDestinos, createDestino, updateDestino, deleteDestino, getDestinosProveedores,
+            campanhas, loadCampanhas, createCampanha, updateCampanha, deleteCampanha, getCampanhasProveedor, getCampanhasDestinosDesde, getCampanhasDestinosHasta
         }}>
             {children}
         </TurismoContext.Provider>

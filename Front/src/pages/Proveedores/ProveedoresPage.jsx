@@ -16,6 +16,10 @@ const ProveedoresPage = () => {
     const [showForm, setShowForm] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
 
+    const filteredProveedor = proveedores.filter(proveedor =>
+        String(proveedor.nit).toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -121,39 +125,39 @@ const ProveedoresPage = () => {
     }
 
     return (
-        <div className="p-6 bg-gray-100 min-h-screen">
-            <h1 className="text-2xl font-bold mb-4 text-center">PROVEEDORES</h1>
-            <div className="flex justify-between items-center mb-4 max-w-2xl mx-auto">
+        <div className="p-8 bg-gray-100 min-h-screen">
+            <h1 className="text-3xl font-bold mb-6 text-center">PROVEEDORES</h1>
+            <div className="flex justify-between items-center mb-6 max-w-4xl mx-auto">
                 <input
                     type="text"
                     placeholder="Buscar por el nit..."
                     value={searchTerm}
                     onChange={handleSearch}
-                    className="w-3/4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-2/3 px-6 py-3 text-lg border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                     onClick={() => setShowForm(true)}
-                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+                    className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition text-lg"
                 >
                     <i className="fa fa-plus w-5 h-5"></i>
                     Agregar
                 </button>
             </div>
-            <div className="max-w-2xl mx-auto overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300">
+            <div className="max-w-7xl mx-auto overflow-x-auto">
+                <table className="w-full border-collapse border border-gray-300 text-lg">
                     <thead>
                         <tr className="bg-gray-200">
-                            <th className="border border-gray-300 px-4 py-2">#</th>
-                            <th className="border border-gray-300 px-4 py-2">Razon Social</th>
-                            <th className="border border-gray-300 px-4 py-2">Nit</th>
-                            <th className="border border-gray-300 px-4 py-2">Correo</th>
-                            <th className="border border-gray-300 px-4 py-2">Telefono</th>
-                            <th className="border border-gray-300 px-4 py-2">Acciones</th>
+                            <th className="border border-gray-300 px-8 py-4">#</th>
+                            <th className="border border-gray-300 px-8 py-4">Razon Social</th>
+                            <th className="border border-gray-300 px-8 py-4">Nit</th>
+                            <th className="border border-gray-300 px-8 py-4">Correo</th>
+                            <th className="border border-gray-300 px-8 py-4">Telefono</th>
+                            <th className="border border-gray-300 px-8 py-4">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {proveedores.length > 0 ? (
-                            proveedores.map((item, index) => (
+                        {filteredProveedor.length > 0 ? (
+                            filteredProveedor.map((item, index) => (
                                 <tr key={index+1} className="hover:bg-gray-100">
                                     <td className="border border-gray-300 px-4 py-2 text-center">
                                         {index+1}
@@ -171,10 +175,10 @@ const ProveedoresPage = () => {
                                         {item.telefono}
                                     </td>
                                     <td className="border border-gray-300 px-4 py-2 flex justify-center gap-2">
-                                        <button onClick={() => handleEdit(item)} className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1">
+                                        <button onClick={() => handleEdit(item)} className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1 border border-gray-300">
                                             <i className="fa fa-edit"></i>
                                         </button>
-                                        <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 flex items-center gap-1" >
+                                        <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 flex items-center gap-1 border border-gray-300">
                                             <i className="fa fa-trash"></i>
                                         </button>
                                     </td>

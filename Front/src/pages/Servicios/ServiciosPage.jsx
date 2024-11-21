@@ -19,6 +19,10 @@ const ServiciosPage = () => {
     const [showForm, setShowForm] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
 
+    const filteredServicios = servicios.filter(servicio =>
+        servicio.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -143,36 +147,36 @@ const ServiciosPage = () => {
     }
 
     return (
-        <div className="p-6 bg-gray-100 min-h-screen">
-            <h1 className="text-2xl font-bold mb-4 text-center">SERVICIOS</h1>
-            <div className="flex justify-between items-center mb-4 max-w-2xl mx-auto">
+        <div className="p-8 bg-gray-100 min-h-screen">
+            <h1 className="text-3xl font-bold mb-6 text-center">SERVICIOS</h1>
+            <div className="flex justify-between items-center mb-6 max-w-4xl mx-auto">
                 <input
                     type="text"
                     placeholder="Buscar por nombre..."
                     value={searchTerm}
                     onChange={handleSearch}
-                    className="w-3/4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-2/3 px-6 py-3 text-lg border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                     onClick={() => setShowForm(true)}
-                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+                    className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition text-lg"
                 >
                     <i className="fa fa-plus w-5 h-5"></i>
                     Agregar
                 </button>
             </div>
-            <div className="max-w-2xl mx-auto overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300">
+            <div className="max-w-7xl mx-auto overflow-x-auto">
+                <table className="w-full border-collapse border border-gray-300 text-lg">
                     <thead>
                         <tr className="bg-gray-200">
-                            <th className="border border-gray-300 px-4 py-2">#</th>
-                            <th className="border border-gray-300 px-4 py-2">Nombre</th>
-                            <th className="border border-gray-300 px-4 py-2">Acciones</th>
+                            <th className="border border-gray-300 px-8 py-4">#</th>
+                            <th className="border border-gray-300 px-8 py-4">Nombre</th>
+                            <th className="border border-gray-300 px-8 py-4">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {servicios.length > 0 ? (
-                            servicios.map((item, index) => (
+                        {filteredServicios.length > 0 ? (
+                            filteredServicios.map((item, index) => (
                                 <tr key={index+1} className="hover:bg-gray-100">
                                     <td className="border border-gray-300 px-4 py-2 text-center">
                                         {index+1}
@@ -181,10 +185,10 @@ const ServiciosPage = () => {
                                         {item.nombre}
                                     </td>
                                     <td className="border border-gray-300 px-4 py-2 flex justify-center gap-2">
-                                        <button onClick={() => handleEdit(item)} className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1">
+                                        <button onClick={() => handleEdit(item)} className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1 border border-gray-300">
                                             <i className="fa fa-edit"></i>
                                         </button>
-                                        <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 flex items-center gap-1" >
+                                        <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 flex items-center gap-1 border border-gray-300">
                                             <i className="fa fa-trash"></i>
                                         </button>
                                     </td>

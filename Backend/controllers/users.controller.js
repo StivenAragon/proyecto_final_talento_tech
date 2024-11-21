@@ -96,3 +96,33 @@ export const checkEmails = async (req, res) => {
       return res.status(500).json({ status: 500, message: error.message });
     }
 };
+export const cambiarContrasenha = async (req, res) => {
+    try {
+        const { contrasenha_actual, contrasenha_nueva, email, rol } = req.body;
+
+        if (!contrasenha_actual || !contrasenha_nueva || !email || !rol) {
+            return res.status(400).json({ message: "Todos los campos son obligatorios" });
+        }
+
+        const [userData] = await pool.query("SELECT * FROM usuarios WHERE email = ? AND rol_id = ?", [email, rol]);
+
+        if (userData.length === 0) {
+            return res.status(404).json({ message: "Usuario no existe", validate: true });
+        }
+
+        const user = userData[0];
+
+        const isPasswordValid = await bcrypt.compare(contrasenha_actual, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "La contraseña actual es incorrecta" });
+        }
+
+        const hashedPassword = await bcrypt.hash(contrasenha_nueva, 10);
+
+        await pool.query('UPDATE usuarios SET password = ? WHERE email = ? AND rol_id = ?', [hashedPassword, email, rol]);
+
+        return res.status(200).json({ status: 200, message: "La contraseña ha sido cambiada exitosamente" });
+    } catch (error) {
+        return res.status(500).json({ status: 500, message: "Error del servidor", error: error.message });
+    }
+};

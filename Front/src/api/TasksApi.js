@@ -14,6 +14,9 @@ export const loginUserRequest = async (credentials) =>
 export const checkEmailsUniqueRequest = async(email) => 
     await axios.post(`${API_URL}/ckeckEmailsUnique`, email);
 
+export const cambiarContrasenhaRequest = async(email) => 
+    await axios.post(`${API_URL}/cambiarContrasenha`, email);
+
 //Proveedores
 export const getProveedoresRequest = async() => 
     await axios.get(`${API_URL}/proveedores`);
@@ -40,6 +43,9 @@ export const updateServicioRequest = async(servicio) =>
 export const deleteServicioRequest = async(servicio) => 
     await axios.post(`${API_URL}/servicios/delete`, servicio);
 
+export const getServiciosProveedoresRequest = async(servicio) => 
+    await axios.post(`${API_URL}/servicios/getServiciosProveedores`, servicio);
+
 //Destinos
 export const getDestinosRequest = async() => 
     await axios.get(`${API_URL}/destinos`);
@@ -52,3 +58,28 @@ export const updateDestinoRequest = async(destino) =>
 
 export const deleteDestinoRequest = async(destino) => 
     await axios.post(`${API_URL}/destinos/delete`, destino);
+
+export const getDestinosProveedoresRequest = async(destino) => 
+    await axios.post(`${API_URL}/destinos/getDestinosProveedores`, destino);
+
+//Campanhas
+export const getCampanhasRequest = async(params) => 
+    await axios.get(`${API_URL}/campanhas`, {params});
+
+export const createCampanhaRequest = async(campanha) => 
+    await axios.post(`${API_URL}/campanhas/create`, campanha);
+
+export const updateCampanhaRequest = async(campanha) => 
+    await axios.post(`${API_URL}/campanhas/update`, campanha);
+
+export const deleteCampanhaRequest = async(campanha) => 
+    await axios.post(`${API_URL}/campanhas/delete`, campanha);
+
+export const getCampanhasProveedorRequest = async(campanha) => 
+    await axios.post(`${API_URL}/campanhas/getCampanhasProveedor`, campanha);
+
+export const getCampanhasDestinosDesdeRequest = async(campanha) => 
+    await axios.post(`${API_URL}/campanhas/getCampanhasDestinosDesde`, campanha);
+
+export const getCampanhasDestinosHastaRequest = async(campanha) => 
+    await axios.post(`${API_URL}/campanhas/getCampanhasDestinosHasta`, campanha);

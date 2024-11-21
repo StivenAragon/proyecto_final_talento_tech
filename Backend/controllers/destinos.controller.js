@@ -66,3 +66,21 @@ export const deleteDestino = async (req, res) => {
     return res.status(500).json({ status: 500, message: error.message });
   }
 };
+
+export const getDestinosProveedor = async(req, res) => {
+  try {
+    const { proveedor_id } = req.body;  
+
+    const [proveedor] = await pool.query('SELECT id FROM proveedores WHERE id = ?', [proveedor_id]);
+
+    if (proveedor.length === 0) {
+      return res.status(404).json({ status: 404, message: 'Proveedor no encontrado.' });
+    }
+
+    const [result] = await pool.query(`SELECT * FROM destinos WHERE proveedor_id = ?`, [proveedor_id] );
+  
+      res.json(result)
+  }catch(error) {
+    return res.status(500).json({ status: 500, message: error.message });
+  }
+}

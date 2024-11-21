@@ -1,19 +1,22 @@
 import LoginPage from "../pages/LoginPage";
 import HomePage from "../pages/HomePage";
 import RegisterPage from "../pages/RegisterPage";
-import DashboardPage from "../pages/DashboardPage";
+import DashboardPage from "../pages/Dashboard/DashboardPage";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+import PerfilPage from "../pages/PerfilPage";
+import CambiarContrasenhaPage from "../pages/CambiarContrasenhaPage";
 import NotFoundPage from "../pages/NotFoundPage ";
 import ServiciosPage from "../pages/Servicios/ServiciosPage";
 import DestinosPage from "../pages/Destinos/DestinosPage";
 import ProveedoresPage from "../pages/Proveedores/ProveedoresPage";
+import CampanhasPage from "../pages/Campanhas/CampanhasPage";
 
 const routesConfig = [
     {
         path: '/',
         index: true,
-        element: <HomePage />,
+        element: <LoginPage />,
     },
     {
         path: 'login',
@@ -40,6 +43,22 @@ const routesConfig = [
         ),
     },
     {
+        path: 'perfil',
+        element: (
+            <PrivateRoute>
+                <PerfilPage />
+            </PrivateRoute>
+        ),
+    },
+    {
+        path: 'cambiar_contrasenha',
+        element: (
+            <PrivateRoute>
+                <CambiarContrasenhaPage />
+            </PrivateRoute>
+        ),
+    },
+    {
         path: 'proveedores',
         element: (
             <PrivateRoute>
@@ -60,6 +79,14 @@ const routesConfig = [
         element: (
             <PrivateRoute>
                 <DestinosPage />
+            </PrivateRoute>
+        ),
+    },
+    {
+        path: 'campanhas',
+        element: (
+            <PrivateRoute>
+                <CampanhasPage />
             </PrivateRoute>
         ),
     },
