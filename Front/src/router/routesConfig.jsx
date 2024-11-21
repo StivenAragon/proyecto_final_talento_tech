@@ -1,5 +1,4 @@
 import LoginPage from "../pages/LoginPage";
-import HomePage from "../pages/HomePage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/Dashboard/DashboardPage";
 import PrivateRoute from "./PrivateRoute";
