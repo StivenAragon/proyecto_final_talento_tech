@@ -39,6 +39,7 @@ const DashboardPage = () => {
                             tiempo_salida={campaign.tiempo_salida}
                             destino_desde={campaign.destino_desde}
                             destino_hasta={campaign.destino_hasta}
+                            servicios={campaign.compañiasServicios}
                         />
                     ))}
                 </div>

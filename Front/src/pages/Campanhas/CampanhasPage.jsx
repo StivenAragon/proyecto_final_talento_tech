@@ -12,7 +12,11 @@ const CampanhasPage = () => {
     
     const [arrayDestinos, setArrayDestinos] = useState([]);
     const [arrayServicios, setArrayServicios] = useState([]);
-    
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCampanha, setSelectedCampanha] = useState(null);
+    const [selectedServicios, setSelectedServicios] = useState([]);
+
     const fetchDestinosYServicios = async () => {
         if (proveedor) {
             const servicios = await getServiciosProveedores({proveedor_id: proveedor.id});
@@ -33,8 +37,8 @@ const CampanhasPage = () => {
     const [editingItem, setEditingItem] = useState(null);
 
     const initialFormValues = editingItem
-                                ? { nombre: editingItem.nombre, tiempo_salida: editingItem.hora_salida, fecha_inicio: editingItem.fecha_inicio, fecha_fin: editingItem.fecha_fin, precio: editingItem.precio, observacion: editingItem.observacion, destino_desde_id: editingItem.destino_desde_id, destino_desde: editingItem.destino_desde_camp_dest, destino_hasta_id: editingItem.destino_hasta_id, destino_hasta: editingItem.destino_hasta_camp_dest, array_proveedor_id: []}
-                                : { nombre: '', tiempo_salida: '', fecha_inicio: '', fecha_fin: '', precio: '', observacion: '', destino_desde_id: '', destino_desde: '', destino_hasta_id: '', destino_hasta: '', array_proveedor_id: []};
+                                ? { nombre: editingItem.nombre, tiempo_salida: editingItem.hora_salida, fecha_inicio: editingItem.fecha_inicio, fecha_fin: editingItem.fecha_fin, precio: editingItem.precio, observacion: editingItem.observacion, destino_desde_id: editingItem.destino_desde_id, destino_desde: editingItem.destino_desde_camp_dest, destino_hasta_id: editingItem.destino_hasta_id, destino_hasta: editingItem.destino_hasta_camp_dest, array_servicios: editingItem.serviciosIds}
+                                : { nombre: '', tiempo_salida: '', fecha_inicio: '', fecha_fin: '', precio: '', observacion: '', destino_desde_id: '', destino_desde: '', destino_hasta_id: '', destino_hasta: '', array_servicios: []};
 
     const filteredCampanhas = campanhas.filter(campanha =>
         campanha.nombre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -57,6 +61,7 @@ const CampanhasPage = () => {
         try {
             const valuesSubmit = {
                 ...values,
+                servicios: JSON.stringify(values.array_servicios),
                 id: editingItem? editingItem.id : null,
                 proveedor_id: proveedor ? proveedor.id : null, 
             };
@@ -166,6 +171,18 @@ const CampanhasPage = () => {
         );
     }
 
+    const handleOpenModal = (item) => {
+        setSelectedCampanha(item);
+        setSelectedServicios(item.compañiasServicios || []);
+        setIsModalOpen(true);
+      };
+    
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedServicios([]);
+        setSelectedCampanha(null);
+    };
+
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
             <h1 className="text-3xl font-bold mb-6 text-center">CAMPAÑAS</h1>
@@ -198,6 +215,7 @@ const CampanhasPage = () => {
                             <th className="border border-gray-300 px-8 py-4">Destino Desde</th>
                             <th className="border border-gray-300 px-8 py-4">Destino Hasta</th>
                             <th className="border border-gray-300 px-8 py-4">Observación</th>
+                            <th className="border border-gray-300 px-8 py-4">Servicios</th>
                             <th className="border border-gray-300 px-8 py-4">Acciones</th>
                         </tr>
                     </thead>
@@ -232,6 +250,34 @@ const CampanhasPage = () => {
                                     <td className="border border-gray-300 px-8 py-4">
                                         {item.observacion}
                                     </td>
+                                    <td className="border border-gray-300 px-8 py-4">
+                                        <button onClick={() => handleOpenModal(item)} className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1" >
+                                            <i className="fa fa-cogs text-xl"></i>
+                                        </button>
+                                        {isModalOpen && (
+                                            <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+                                                <div className="bg-white p-6 rounded-lg w-1/3">
+                                                    <h2 className="text-xl mb-4">Servicios de la Campaña: {selectedCampanha?.nombre}</h2>
+                                                    <ul className="text-sm text-gray-600">
+                                                        {selectedServicios.length > 0 ? (
+                                                            selectedServicios.map((servicio, index) => (
+                                                                <li key={index+1} className="mb-2">
+                                                                    <p>{index+1}. {servicio.nombre}</p>
+                                                                </li>
+                                                            ))
+                                                        ) : (
+                                                            <li>No hay servicios disponibles.</li>
+                                                        )}
+                                                    </ul>
+                                                    <div className="mt-4 flex justify-end">
+                                                        <button onClick={handleCloseModal} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" >
+                                                            Cerrar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </td>
                                     <td className="border border-gray-300 px-8 py-4 flex justify-center gap-4">
                                         <button onClick={() => handleEdit(item)} className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1" >
                                             <i className="fa fa-edit"></i>
@@ -244,7 +290,7 @@ const CampanhasPage = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="10" className="border border-gray-300 px-8 py-4 text-center text-gray-500">
+                                <td colSpan="11" className="border border-gray-300 px-8 py-4 text-center text-gray-500">
                                     No se encontraron resultados.
                                 </td>
                             </tr>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import 'font-awesome/css/font-awesome.min.css';
+import Select from 'react-select';
 
 const FormularioCampanha = ({ onSubmit, onBack, initialValues, servicios, destinos }) => {
     const validationSchema = Yup.object().shape({
@@ -23,9 +24,15 @@ const FormularioCampanha = ({ onSubmit, onBack, initialValues, servicios, destin
                 [Yup.ref('destino_desde')],
                 'El destino hasta no puede ser igual al destino desde'
             ),
+        array_servicios: Yup.array().required('Seleccione al menos un servicio').min(1, 'Seleccione al menos un servicio'),
     });
 
     const isEditing = initialValues.nombre !== '';
+
+    const opciones = servicios.map((servicio) => ({
+        value: servicio.id,
+        label: servicio.nombre,
+    }));
 
     return (
         <div>
@@ -34,7 +41,7 @@ const FormularioCampanha = ({ onSubmit, onBack, initialValues, servicios, destin
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
             >
-                {({ handleChange, handleSubmit, values, errors, touched, isSubmitting }) => (
+                {({ handleChange, handleSubmit, values, errors, touched, isSubmitting, setFieldValue }) => (
                     <form className="bg-slate-300 max-w-lg rounded-md p-6 mx-auto mt-10">
                         <h1 className="text-xl font-bold mb-4 uppercase text-center">
                             {isEditing ? 'Actualizar Campaña' : 'Registrar Campaña'}
@@ -142,31 +149,15 @@ const FormularioCampanha = ({ onSubmit, onBack, initialValues, servicios, destin
                         </div>
                         <div className="mb-4">
                             <label className="block font-semibold">Servicios</label>
-                            <select
-                                name="array_proveedor_id"
-                                onChange={(event) => {
-                                    const options = Array.from(event.target.selectedOptions, (option) => option.value);
-                                    handleChange({
-                                        target: {
-                                            name: event.target.name,
-                                            value: options,
-                                        },
-                                    });
-                                }}
-                                value={values.array_proveedor_id}
-                                multiple
-                                className={`px-4 py-2 rounded-md w-full border ${
-                                    errors.array_proveedor_id && touched.array_proveedor_id ? 'border-red-500' : ''
-                                }`}
-                            >
-                                {servicios.map((proveedor) => (
-                                    <option key={proveedor.id} value={proveedor.id}>
-                                        {proveedor.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.array_proveedor_id && touched.array_proveedor_id && (
-                                <p className="text-red-500 text-sm">{errors.array_proveedor_id}</p>
+                            <Select
+                                options={opciones}
+                                isMulti
+                                value={opciones.filter((opcion) => values.array_servicios.includes(opcion.value))}
+                                onChange={(selectedOptions) => setFieldValue('array_servicios', selectedOptions.map((opcion) => opcion.value))}
+                                placeholder="Seleccione opciones"
+                            />
+                            {errors.array_servicios && touched.array_servicios && (
+                                <p className="text-red-500 text-sm">{errors.array_servicios}</p>
                             )}
                         </div>
                         <div className="flex gap-x-2 justify-center mt-6">

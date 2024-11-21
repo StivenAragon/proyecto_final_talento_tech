@@ -79,7 +79,25 @@ export const getCampanhas = async (req, res) => {
 
       const [result] = await pool.query(query, values);
 
-      res.json(result);
+      for (let campanha of result) {
+        let queryServicios = `
+            SELECT s.nombre, cs.id as camp_ser_id, s.id as servi_id
+            FROM campanhas_servicios cs
+            JOIN servicios s ON cs.servicio_id = s.id
+            WHERE cs.campanha_id = ?
+        `;
+    
+        const [resultServicios] = await pool.query(queryServicios, [campanha.id]);
+    
+        campanha.serviciosIds = resultServicios.map(servicio => servicio.servi_id);
+        campanha.compañiasServicios = resultServicios.map(servicio => ({
+          id: servicio.camp_ser_id,
+          id_servicio: servicio.servi_id,
+          nombre: servicio.nombre
+        }));
+     }
+
+    res.json(result);
   } catch (error) {
       return res.status(500).json({ status: 500, message: error.message });
   }
@@ -87,7 +105,7 @@ export const getCampanhas = async (req, res) => {
 
 export const createCampanha = async (req, res) => {
     try {
-      const { nombre, tiempo_salida, fecha_inicio, fecha_fin, precio, observacion, destino_desde, destino_hasta, proveedor_id } = req.body;
+      const { nombre, tiempo_salida, fecha_inicio, fecha_fin, precio, observacion, destino_desde, destino_hasta, servicios, proveedor_id } = req.body;
 
       const [proveedor] = await pool.query('SELECT id FROM proveedores WHERE id = ?', [proveedor_id]);
 
@@ -106,6 +124,13 @@ export const createCampanha = async (req, res) => {
       const [resultDestinoHasta] = await pool.query('INSERT INTO campanhas_destinos(campanha_id, destino_id, validate_destino) VALUES (?, ?, ?)', 
                     [campanhaId, destino_hasta, 2]);
 
+      const arrayServicios = JSON.parse(servicios);
+
+      for (const servicio of arrayServicios) {
+          await pool.query('INSERT INTO campanhas_servicios(campanha_id, servicio_id) VALUES (?, ?)', 
+                          [campanhaId, servicio]);
+      }
+
       return res.status(201).json({ status: 200, message: 'Se ha registrado exitosamente.'});
     } catch (error) {
       return res.status(500).json({ status: 500, message: error.message });
@@ -114,7 +139,7 @@ export const createCampanha = async (req, res) => {
 
 export const updateCampanha = async (req, res) => {
     try {
-      const { id, nombre, tiempo_salida, fecha_inicio, fecha_fin, precio, observacion, destino_desde_id, destino_desde, destino_hasta_id, destino_hasta, proveedor_id } = req.body;
+      const { id, nombre, tiempo_salida, fecha_inicio, fecha_fin, precio, observacion, destino_desde_id, destino_desde, destino_hasta_id, destino_hasta, servicios, proveedor_id } = req.body;
 
       const [proveedor] = await pool.query('SELECT id FROM proveedores WHERE id = ?', [proveedor_id]);
 
@@ -136,6 +161,23 @@ export const updateCampanha = async (req, res) => {
       
       const [resultDestinoHasta] = await pool.query('UPDATE campanhas_destinos SET destino_id = ? WHERE id = ? AND campanha_id = ?', 
                     [destino_hasta, destino_hasta_id ,id]);
+
+      const arrayServicios = JSON.parse(servicios);
+
+      const [existingServices] = await pool.query('SELECT servicio_id FROM campanhas_servicios WHERE campanha_id = ?', [id]);
+
+      const existingServiceIds = existingServices.map(service => service.servicio_id);
+
+      const servicesToDelete = existingServiceIds.filter(serviceId => !arrayServicios.includes(serviceId));
+      if (servicesToDelete.length > 0) {
+        await pool.query('DELETE FROM campanhas_servicios WHERE campanha_id = ? AND servicio_id IN (?)', [id, servicesToDelete]);
+      }
+
+      for (const servicio of arrayServicios) {
+        if (!existingServiceIds.includes(servicio)) {
+          await pool.query('INSERT INTO campanhas_servicios(campanha_id, servicio_id) VALUES (?, ?)', [id, servicio]);
+        }
+      }
   
       return res.status(201).json({ status: 200, message: 'Se ha actualizado exitosamente.'});
     } catch (error) {
@@ -156,6 +198,8 @@ export const deleteCampanha = async (req, res) => {
     
     const [resultDestinoHasta] = await pool.query('DELETE FROM campanhas_destinos WHERE campanha_id = ? AND destino_id = ?', [id, destino_hasta]);
     
+    const [resultCampanhaServicios] = await pool.query('DELETE FROM campanhas_servicios WHERE campanha_id = ?', [id]);
+
     const [result] = await pool.query('DELETE FROM campanhas WHERE id = ? AND proveedor_id = ?', [id, proveedor_id]);
 
     if (result.affectedRows === 0) {
